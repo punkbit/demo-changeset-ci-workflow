@@ -1,0 +1,14 @@
+{
+  "mode": "pre",
+  "tag": "test",
+  "initialVersions": {
+    "@punkbit/demo-changeset-ci-workflow": "0.0.0"
+  },
+  "changesets": [
+    "clean-parents-watch",
+    "dark-cities-buy",
+    "fiery-crews-repair",
+    "real-islands-enter",
+    "sweet-tips-allow"
+  ]
+}
