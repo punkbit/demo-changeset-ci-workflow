@@ -121,25 +121,43 @@ Settings → Actions → General
 └─ ☑️ Allow GitHub Actions to create and approve pull requests [CHECK THIS]
 ```
 
-### 4. Configure NPM Publishing (OIDC)
+### 4. Configure NPM Trusted Publisher (OIDC)
 
-1. Go to https://www.npmjs.com/settings/punkbit/tokens
-2. Click "Generate New Token" → "Granular Access Token"
-3. Give it a name like "GitHub Actions - demo-changeset-ci-workflow"
-4. Set expiration as needed
-5. Select packages: Add `@punkbit/demo-changeset-ci-workflow`
-6. Permissions: Read and Write
-7. Copy the token
+This workflow uses **OIDC (OpenID Connect)** for secure, tokenless publishing to NPM. This means:
+- ✅ No NPM tokens to manage or rotate
+- ✅ No 2FA/OTP required during CI/CD
+- ✅ Cryptographic proof of package origin (provenance)
 
-### 5. Add NPM Token to GitHub Secrets
+**Setup Steps:**
 
-1. Go to your GitHub repo → Settings → Secrets and variables → Actions
-2. Click "New repository secret"
-3. Name: `NPM_TOKEN`
-4. Value: Paste the NPM token from step 4
-5. Click "Add secret"
+1. **Enable 2FA on your NPM account** (required for trusted publishers)
+   - Go to https://www.npmjs.com/settings/punkbit/security
+   - Enable Two-Factor Authentication if not already enabled
 
-### 6. Configure Branch Protection (Recommended)
+2. **Add GitHub Actions as a Trusted Publisher**
+   - Go to your package page on NPM: https://www.npmjs.com/package/@punkbit/demo-changeset-ci-workflow
+   - Click **"Settings"** tab
+   - Under **"Trusted Publishers"**, click **"Add Publisher"**
+   - Select **"GitHub Actions"** as the provider
+   - Enter your repository: `punkbit/demo-changeset-ci-workflow`
+   - Click **"Add"**
+
+3. **Alternative: Use NPM CLI to add trusted publisher**
+   ```bash
+   npm access grant publish @punkbit/demo-changeset-ci-workflow github-actions:punkbit/demo-changeset-ci-workflow
+   ```
+
+**Verification:**
+After setup, you should see `github-actions:punkbit/demo-changeset-ci-workflow` listed under Trusted Publishers on your package's settings page.
+
+**Important:**
+- The package must already exist on NPM (create it manually first if needed)
+- Your GitHub repository name must match exactly
+- This setup only needs to be done once per package
+
+For more details, see: https://docs.npmjs.com/trusted-publishers
+
+### 5. Configure Branch Protection (Recommended)
 
 1. Go to Settings → Branches
 2. Click "Add rule"
