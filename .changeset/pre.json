@@ -1,0 +1,10 @@
+{
+  "mode": "pre",
+  "tag": "test",
+  "initialVersions": {
+    "@punkbit/demo-changeset-ci-workflow": "0.0.0"
+  },
+  "changesets": [
+    "real-islands-enter"
+  ]
+}
