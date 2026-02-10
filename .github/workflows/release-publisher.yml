@@ -120,7 +120,11 @@ jobs:
 
       - name: Publish to npm with OIDC provenance
         if: steps.verify-merge.outputs.is_release == 'true'
-        run: npm publish --access public --provenance
+        run: |
+          npm publish \
+          --access public \
+          --provenance \
+          --tag ${{ steps.package-info.outputs.tag }}
 
       - name: Extract changelog
         if: steps.verify-merge.outputs.is_release == 'true'
