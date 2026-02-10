@@ -99,7 +99,29 @@ git branch -M main
 git push -u origin main
 ```
 
-### 3. Configure NPM Publishing (OIDC)
+### 3. Configure GitHub Actions Permissions (CRITICAL)
+
+The Create Release workflow needs permission to create pull requests. Without this, you'll get the error: *"GitHub Actions is not permitted to create or approve pull requests"*
+
+**Required Settings:**
+
+1. Go to your GitHub repo → **Settings** → **Actions** → **General**
+2. Under **Workflow permissions**, select:
+   - ✅ **Read and write permissions** (not just "Read repository contents")
+3. Check the box:
+   - ✅ **Allow GitHub Actions to create and approve pull requests**
+
+**Visual guide:**
+```
+Settings → Actions → General
+├─ Workflow permissions
+│  ├─ ⭕ Read repository contents and packages permissions  [DON'T SELECT]
+│  └─ ✅ Read and write permissions                       [SELECT THIS]
+│
+└─ ☑️ Allow GitHub Actions to create and approve pull requests [CHECK THIS]
+```
+
+### 4. Configure NPM Publishing (OIDC)
 
 1. Go to https://www.npmjs.com/settings/punkbit/tokens
 2. Click "Generate New Token" → "Granular Access Token"
@@ -109,15 +131,15 @@ git push -u origin main
 6. Permissions: Read and Write
 7. Copy the token
 
-### 4. Add NPM Token to GitHub Secrets
+### 5. Add NPM Token to GitHub Secrets
 
 1. Go to your GitHub repo → Settings → Secrets and variables → Actions
 2. Click "New repository secret"
 3. Name: `NPM_TOKEN`
-4. Value: Paste the NPM token from step 3
+4. Value: Paste the NPM token from step 4
 5. Click "Add secret"
 
-### 5. Configure Branch Protection (Recommended)
+### 6. Configure Branch Protection (Recommended)
 
 1. Go to Settings → Branches
 2. Click "Add rule"
