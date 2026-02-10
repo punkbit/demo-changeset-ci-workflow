@@ -1,0 +1,40 @@
+{
+  "name": "@punkbit/demo-changeset-ci-workflow",
+  "version": "0.0.0",
+  "description": "Demo package for showcasing changeset-based CI/CD workflow",
+  "type": "module",
+  "license": "MIT",
+  "files": [
+    "dist"
+  ],
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    }
+  },
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "keywords": [
+    "demo",
+    "changeset",
+    "ci-cd"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/punkbit/demo-changeset-ci-workflow.git"
+  },
+  "scripts": {
+    "build": "tsc",
+    "changeset:add": "changeset",
+    "changeset:status": "changeset status",
+    "changeset:version": "changeset version"
+  },
+  "devDependencies": {
+    "@changesets/cli": "^2.29.8",
+    "typescript": "^5.5.3"
+  },
+  "engines": {
+    "node": ">=18"
+  }
+}
