@@ -1,5 +1,12 @@
 # @punkbit/demo-changeset-ci-workflow
 
+## 0.1.0-test.1
+
+### Minor Changes
+
+- 8800221: some other changes
+- f80dec6: I made some changes so do X and Z
+
 ## 0.1.0-test.0
 
 ### Minor Changes
