@@ -102,41 +102,32 @@ jobs:
           echo "branch=changeset-release/v${{ steps.version-package.outputs.version }}-${{ inputs.release_type }}" >> $GITHUB_OUTPUT
 
       - name: Create Pull Request
-        env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: |
-          git config user.name "github-actions[bot]"
-          git config user.email "github-actions[bot]@users.noreply.github.com"
-    
-          BRANCH="${{ steps.pr-details.outputs.branch }}"
-          git checkout -b "$BRANCH"
-    
-          git add .
-          git commit -m "${{ steps.pr-details.outputs.title }}"
-    
-          git push origin "$BRANCH"
-    
-          gh pr create \
-            --title "${{ steps.pr-details.outputs.title }}" \
-            --body "## Why?
+        uses: peter-evans/create-pull-request@v5
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          commit-message: ${{ steps.pr-details.outputs.title }}
+          base: ${{ github.ref_name }}
+          branch: ${{ steps.pr-details.outputs.branch }}
+          delete-branch: true
+          title: ${{ steps.pr-details.outputs.title }}
+          body: |
+            ## Why?
 
-          To trigger a release of ${{ steps.version-package.outputs.package_name }} version ${{ steps.version-package.outputs.version }} (${{ inputs.release_type }}).
+            To trigger a release of ${{ steps.version-package.outputs.package_name }} version ${{ steps.version-package.outputs.version }} (${{ inputs.release_type }}).
 
-          ## Release checklist?
+            ## Release checklist?
 
-          Take this opportunity to ensure that the following checklist is verified to avoid disappointment.
+            Take this opportunity to ensure that the following checklist is verified to avoid disappointment.
 
-          - [ ] Version bump is correct
-          - [ ] Changelog entries are accurate
-          - [ ] All changesets have been consumed
-          - [ ] Ready to publish
+            - [ ] Version bump is correct
+            - [ ] Changelog entries are accurate
+            - [ ] All changesets have been consumed
+            - [ ] Ready to publish
 
-          ## Preview?
+            ## Preview?
 
-          Optionally, provide a demo or a preview url here
+            Optionally, provide a demo or a preview url here
 
-          ---
+            ---
 
-          **Tag:** \`v${{ steps.version-package.outputs.version }}\` will be included in this PR" \
-            --base main \
-            --head "$BRANCH"
+            **Tag:** `v${{ steps.version-package.outputs.version }}` will be included in this PR
