@@ -184,6 +184,7 @@ jobs:
         run: |
           VERSION="${{ steps.verify-merge.outputs.version }}"
           COMMIT_SHA="${{ github.sha }}"
+          CURRENT_BRANCH="${{ github.ref_name }}"
 
           BASE_VERSION=$(echo "$VERSION" | grep -oE '^[0-9]+\.[0-9]+\.[0-9]+')
           MAINTENANCE_BRANCH="chore/v${BASE_VERSION}"
