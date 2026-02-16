@@ -1,5 +1,11 @@
 # @punkbit/demo-changeset-ci-workflow
 
+## 0.1.0-rc.4
+
+### Patch Changes
+
+- d8ece2e: now it did change the greeting
+
 ## 0.1.0-rc.3
 
 ### Patch Changes
