@@ -1,5 +1,11 @@
 # @punkbit/demo-changeset-ci-workflow
 
+## 0.1.0-rc.3
+
+### Patch Changes
+
+- 9b06c48: refactored showing the package version handler
+
 ## 0.1.0-test.2
 
 ### Minor Changes
