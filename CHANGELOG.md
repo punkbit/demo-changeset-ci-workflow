@@ -1,5 +1,11 @@
 # @punkbit/demo-changeset-ci-workflow
 
+## 0.1.0-rc.5
+
+### Patch Changes
+
+- 38851bd: change greeting to hello again
+
 ## 0.1.0-rc.4
 
 ### Patch Changes
