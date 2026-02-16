@@ -1,5 +1,11 @@
 # @punkbit/demo-changeset-ci-workflow
 
+## 0.2.0-rc.1
+
+### Patch Changes
+
+- 9b1362c: added a security path
+
 ## 0.2.0-test.0
 
 ### Minor Changes
