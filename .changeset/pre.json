@@ -1,17 +1,19 @@
 {
   "mode": "pre",
-  "tag": "test",
+  "tag": "rc",
   "initialVersions": {
-    "@punkbit/demo-changeset-ci-workflow": "0.0.0"
+    "@punkbit/demo-changeset-ci-workflow": "0.1.0-test.2"
   },
   "changesets": [
     "clean-parents-watch",
+    "clever-lands-bake",
     "cold-horses-ask",
     "dark-cities-buy",
     "fiery-crews-repair",
     "fine-oranges-rescue",
     "perky-clubs-build",
     "real-islands-enter",
+    "spicy-geese-pump",
     "sweet-tips-allow"
   ]
 }
