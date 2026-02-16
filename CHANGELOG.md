@@ -1,5 +1,19 @@
 # @punkbit/demo-changeset-ci-workflow
 
+## 1.0.0-rc.1
+
+### Major Changes
+
+- 86f65f9: super feature
+
+### Minor Changes
+
+- 139b4bf: introduced a new document
+
+### Patch Changes
+
+- 2c11a81: added a security path
+
 ## 0.2.0-test.0
 
 ### Minor Changes
