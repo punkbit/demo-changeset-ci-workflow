@@ -1,5 +1,18 @@
 # @punkbit/demo-changeset-ci-workflow
 
+## 0.2.0
+
+### Minor Changes
+
+- 34b400e: introduced a cool feature
+
+### Patch Changes
+
+- 5d3cce6: now it did change the greeting
+- 9b06c48: refactored showing the package version handler
+- 905dd38: change greeting
+- 9b1362c: added a security path
+
 ## 0.2.0-rc.1
 
 ### Patch Changes
