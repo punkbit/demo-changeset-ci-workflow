@@ -1,0 +1,13 @@
+{
+  "mode": "pre",
+  "tag": "test",
+  "initialVersions": {
+    "@punkbit/demo-changeset-ci-workflow": "0.1.0"
+  },
+  "changesets": [
+    "clear-grapes-fetch",
+    "clever-lands-bake",
+    "proud-camels-stick",
+    "whole-berries-win"
+  ]
+}
