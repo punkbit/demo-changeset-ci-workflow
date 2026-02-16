@@ -1,5 +1,11 @@
 # @punkbit/demo-changeset-ci-workflow
 
+## 1.0.0-test.2
+
+### Minor Changes
+
+- 2becc8b: introduced chore changes A
+
 ## 1.0.0-rc.1
 
 ### Major Changes
