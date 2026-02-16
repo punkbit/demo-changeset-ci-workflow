@@ -1,5 +1,17 @@
 # @punkbit/demo-changeset-ci-workflow
 
+## 0.2.0-test.0
+
+### Minor Changes
+
+- 34b400e: introduced a cool feature
+
+### Patch Changes
+
+- 5d3cce6: now it did change the greeting
+- 9b06c48: refactored showing the package version handler
+- 905dd38: change greeting
+
 ## 0.1.0
 
 ### Minor Changes
