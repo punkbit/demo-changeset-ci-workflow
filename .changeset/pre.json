@@ -1,13 +1,14 @@
 {
   "mode": "pre",
-  "tag": "test",
+  "tag": "rc",
   "initialVersions": {
-    "@punkbit/demo-changeset-ci-workflow": "0.1.0"
+    "@punkbit/demo-changeset-ci-workflow": "0.2.0-test.0"
   },
   "changesets": [
     "clear-grapes-fetch",
     "clever-lands-bake",
     "proud-camels-stick",
+    "slick-deer-teach",
     "whole-berries-win"
   ]
 }
