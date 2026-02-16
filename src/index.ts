@@ -1,7 +1,7 @@
 import pkg from '../package.json';
 
 export function greet(name: string): string {
-  return `Hello once again! ${name}!`;
+  return `Hello, this cool one here, ${name}!`;
 }
 
 export function getVersion(): string {
