@@ -1,5 +1,11 @@
 # @punkbit/demo-changeset-ci-workflow
 
+## 0.1.0-rc.7
+
+### Patch Changes
+
+- 49fa5fe: changed greeting to once again!
+
 ## 0.1.0-rc.6
 
 ### Patch Changes
