@@ -1,5 +1,11 @@
 # @punkbit/demo-changeset-ci-workflow
 
+## 0.1.0-test.2
+
+### Minor Changes
+
+- fd8d25c: new changes made bla bla bla
+
 ## 0.1.0-test.1
 
 ### Minor Changes
