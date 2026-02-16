@@ -200,21 +200,33 @@ jobs:
             echo "📋 Maintenance branch '$MAINTENANCE_BRANCH' already exists"
             echo "🔄 Updating branch with new release commit..."
 
-            git fetch origin "$MAINTENANCE_BRANCH:$MAINTENANCE_BRANCH"
+            if [[ "$CURRENT_BRANCH" == "$MAINTENANCE_BRANCH" ]]; then
+              echo "✅ Already on maintenance branch, merging release commit..."
 
-            git checkout "$MAINTENANCE_BRANCH"
-
-            echo "➡️  Attempting to merge $COMMIT_SHA into $MAINTENANCE_BRANCH..."
-
-            if git merge "$COMMIT_SHA" -m "chore: merge release v$VERSION into $MAINTENANCE_BRANCH"; then
-              echo "✅ Successfully merged release v$VERSION"
-
-              git push origin "$MAINTENANCE_BRANCH"
-              echo "✅ Updated maintenance branch '$MAINTENANCE_BRANCH'"
+              if git merge "$COMMIT_SHA" -m "chore: merge release v$VERSION into $MAINTENANCE_BRANCH"; then
+                echo "✅ Successfully merged release v$VERSION"
+                git push origin "$MAINTENANCE_BRANCH"
+                echo "✅ Updated maintenance branch '$MAINTENANCE_BRANCH'"
+              else
+                echo "👹 Oops! Merge failed, conflicts detected..."
+                echo "💡 Please manually resolve the conflicts and push to $MAINTENANCE_BRANCH and try again..."
+                exit 1
+              fi
             else
-              echo "👹 Oops! Merge failed, conflicts detected..."
-              echo "💡 Please manually resolve the conflicts and push to $MAINTENANCE_BRANCH and try again..."
-              exit 1
+              git fetch origin "$MAINTENANCE_BRANCH:$MAINTENANCE_BRANCH"
+              git checkout "$MAINTENANCE_BRANCH"
+
+              echo "➡️  Attempting to merge $COMMIT_SHA into $MAINTENANCE_BRANCH..."
+
+              if git merge "$COMMIT_SHA" -m "chore: merge release v$VERSION into $MAINTENANCE_BRANCH"; then
+                echo "✅ Successfully merged release v$VERSION"
+                git push origin "$MAINTENANCE_BRANCH"
+                echo "✅ Updated maintenance branch '$MAINTENANCE_BRANCH'"
+              else
+                echo "👹 Oops! Merge failed, conflicts detected..."
+                echo "💡 Please manually resolve the conflicts and push to $MAINTENANCE_BRANCH and try again..."
+                exit 1
+              fi
             fi
           else
             echo "📋 Maintenance branch '$MAINTENANCE_BRANCH' does not exist"
