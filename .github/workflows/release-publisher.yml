@@ -31,13 +31,48 @@ jobs:
           
           COMMIT_MSG=$(git log -1 --pretty=%B "$COMMIT_SHA")
           
+          # Check for different release commit message formats:
+          # - chore: 🤖 release v1.0.0 (latest)
+          # - chore: 🤖 release v1.0.0 (pre-release)
+          # - chore: 🤖 release v1.0.0-rc.1 (rc)
+          # - chore: 🤖 release v1.0.0-test.1 (test)
           if [[ ! "$COMMIT_MSG" =~ chore:\ 🤖\ release\ v[0-9]+\.[0-9]+\.[0-9]+.* ]]; then
             echo "⚠️ This is not a release PR merge. Skipping release."
             echo "is_release=false" >> $GITHUB_OUTPUT
             exit 0
           fi
           
-          VERSION=$(echo "$COMMIT_MSG" | grep -oE 'v[0-9]+\.[0-9]+\.[0-9]+(-[a-zA-Z0-9.]+)?' | head -1 | sed 's/^v//')
+          # Extract base version (e.g., v1.0.0 from v1.0.0-rc.1 or just v1.0.0)
+          BASE_VERSION=$(echo "$COMMIT_MSG" | grep -oE 'v[0-9]+\.[0-9]+\.[0-9]+' | head -1 | sed 's/^v//')
+          
+          # Try to extract full version with pre-release suffix if present
+          FULL_VERSION=$(echo "$COMMIT_MSG" | grep -oE 'v[0-9]+\.[0-9]+\.[0-9]+(-[a-zA-Z0-9.]+)?' | head -1 | sed 's/^v//')
+          
+          # Determine release type from commit message
+          RELEASE_TYPE=""
+          if [[ "$COMMIT_MSG" =~ \(latest\) ]]; then
+            RELEASE_TYPE="latest"
+            VERSION="$BASE_VERSION"
+          elif [[ "$COMMIT_MSG" =~ \(pre-release\) ]]; then
+            RELEASE_TYPE="pre-release"
+            VERSION="$BASE_VERSION"
+          elif [[ "$COMMIT_MSG" =~ \(rc\) ]]; then
+            RELEASE_TYPE="rc"
+            VERSION="$FULL_VERSION"
+          elif [[ "$COMMIT_MSG" =~ \(test\) ]]; then
+            RELEASE_TYPE="test"
+            VERSION="$FULL_VERSION"
+          else
+            # Fallback: try to determine from version string
+            VERSION="$FULL_VERSION"
+            if [[ "$VERSION" =~ -rc\. ]]; then
+              RELEASE_TYPE="rc"
+            elif [[ "$VERSION" =~ -test\. ]]; then
+              RELEASE_TYPE="test"
+            else
+              RELEASE_TYPE="latest"
+            fi
+          fi
           
           if [[ -z "$VERSION" ]]; then
             echo "⚠️ Could not extract version from commit message. Skipping release."
@@ -45,9 +80,14 @@ jobs:
             exit 0
           fi
           
-          echo "✅ Detected release PR merge for version $VERSION"
+          echo "✅ Detected release PR merge"
+          echo "   Version: $VERSION"
+          echo "   Base Version: $BASE_VERSION"
+          echo "   Release Type: $RELEASE_TYPE"
           echo "is_release=true" >> $GITHUB_OUTPUT
           echo "version=$VERSION" >> $GITHUB_OUTPUT
+          echo "base_version=$BASE_VERSION" >> $GITHUB_OUTPUT
+          echo "release_type=$RELEASE_TYPE" >> $GITHUB_OUTPUT
           echo "tag=v$VERSION" >> $GITHUB_OUTPUT
 
       - name: Maintenance branch safeguard check
@@ -55,19 +95,22 @@ jobs:
         id: safeguard
         run: |
           VERSION="${{ steps.verify-merge.outputs.version }}"
+          BASE_VERSION="${{ steps.verify-merge.outputs.base_version }}"
+          RELEASE_TYPE="${{ steps.verify-merge.outputs.release_type }}"
           CURRENT_BRANCH="${{ github.ref_name }}"
 
-          BASE_VERSION=$(echo "$VERSION" | grep -oE '^[0-9]+\.[0-9]+\.[0-9]+')
           MAINTENANCE_BRANCH="chore/v${BASE_VERSION}"
 
           echo "🔍 Checking maintenance branch safeguard..."
           echo "🤖 Current branch is $CURRENT_BRANCH"
+          echo "🤖 Version is $VERSION"
           echo "🤖 Base version is $BASE_VERSION"
+          echo "🤖 Release type is $RELEASE_TYPE"
           echo "🤖 Maintenance branch is $MAINTENANCE_BRANCH"
 
-          # Check if this is a pre-release or latest release
+          # Determine if this is a pre-release based on release type
           IS_PRERELEASE=false
-          if [[ "$VERSION" =~ -[a-zA-Z0-9.]+$ ]]; then
+          if [[ "$RELEASE_TYPE" == "test" || "$RELEASE_TYPE" == "rc" || "$RELEASE_TYPE" == "pre-release" ]]; then
             IS_PRERELEASE=true
           fi
 
@@ -77,7 +120,7 @@ jobs:
 
           if [[ "$CURRENT_BRANCH" == "main" ]]; then
             if [[ "$IS_PRERELEASE" == "true" ]]; then
-              # Pre-releases from main: maintenance branch must NOT exist
+              # Pre-releases from main: maintenance branch must NOT exist (initial creation)
               if git ls-remote --exit-code --heads origin "$MAINTENANCE_BRANCH" >/dev/null 2>&1; then
                 echo "👹 Oops! Maintenance branch '$MAINTENANCE_BRANCH' already exists."
                 echo "💡 Pre-releases from main are only allowed before the maintenance branch is created."

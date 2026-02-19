@@ -81,15 +81,30 @@ jobs:
           echo "💡 You must release through 'test' or 'rc' before creating a stable release."
           exit 1
 
-      - name: Validate maintenance branch exists for latest release
-        if: inputs.release_type == 'latest'
+      - name: Check if maintenance branch exists
+        id: check-maintenance-branch
         run: |
-          echo "🔍 Checking if maintenance branch exists for latest release..."
+          VERSION="${{ steps.version-package.outputs.version }}"
+          BASE_VERSION=$(echo "$VERSION" | grep -oE '^[0-9]+\.[0-9]+\.[0-9]+')
+          MAINTENANCE_BRANCH="chore/v${BASE_VERSION}"
           
-          # Get the version that will be released (before versioning)
-          # We need to check what version changeset will compute
-          # For now, we'll check in the publisher - here we just verify we're on main
-          echo "✅ On main branch, maintenance branch check will happen in publisher"
+          echo "base_version=$BASE_VERSION" >> $GITHUB_OUTPUT
+          echo "maintenance_branch=$MAINTENANCE_BRANCH" >> $GITHUB_OUTPUT
+          
+          if git ls-remote --exit-code --heads origin "$MAINTENANCE_BRANCH" >/dev/null 2>&1; then
+            echo "exists=true" >> $GITHUB_OUTPUT
+            echo "✅ Maintenance branch '$MAINTENANCE_BRANCH' already exists"
+          else
+            echo "exists=false" >> $GITHUB_OUTPUT
+            echo "📋 Maintenance branch '$MAINTENANCE_BRANCH' does not exist yet"
+          fi
+
+      - name: Validate maintenance branch exists for latest release
+        if: inputs.release_type == 'latest' && steps.check-maintenance-branch.outputs.exists == 'false'
+        run: |
+          echo "👹 Oops! Maintenance branch '${{ steps.check-maintenance-branch.outputs.maintenance_branch }}' does not exist."
+          echo "💡 Latest releases require a pre-release first. Please create a test or rc release."
+          exit 1
 
       - name: Confirm production release
         if: inputs.release_type == 'latest'
@@ -117,8 +132,45 @@ jobs:
       - name: Determine PR details
         id: pr-details
         run: |
-          echo "title=chore: 🤖 release v${{ steps.version-package.outputs.version }} (${{ inputs.release_type }})" >> $GITHUB_OUTPUT
-          echo "branch=changeset-release/v${{ steps.version-package.outputs.version }}-${{ inputs.release_type }}" >> $GITHUB_OUTPUT
+          VERSION="${{ steps.version-package.outputs.version }}"
+          BASE_VERSION="${{ steps.check-maintenance-branch.outputs.base_version }}"
+          RELEASE_TYPE="${{ inputs.release_type }}"
+          MAINTENANCE_EXISTS="${{ steps.check-maintenance-branch.outputs.exists }}"
+          CURRENT_BRANCH="${{ github.ref_name }}"
+          
+          # Determine commit message based on scenario
+          if [[ "$RELEASE_TYPE" == "latest" ]]; then
+            # Latest release: use base version with (latest)
+            COMMIT_MSG="chore: 🤖 release v${BASE_VERSION} (latest)"
+          elif [[ "$MAINTENANCE_EXISTS" == "false" && "$CURRENT_BRANCH" == "main" ]]; then
+            # Initial pre-release from main: use base version with (pre-release)
+            COMMIT_MSG="chore: 🤖 release v${BASE_VERSION} (pre-release)"
+          else
+            # Subsequent pre-release: use full version with specific type
+            COMMIT_MSG="chore: 🤖 release v${VERSION} (${RELEASE_TYPE})"
+          fi
+          
+          echo "title=${COMMIT_MSG}" >> $GITHUB_OUTPUT
+          echo "branch=changeset-release/v${VERSION}-${RELEASE_TYPE}" >> $GITHUB_OUTPUT
+          echo "commit_msg=${COMMIT_MSG}" >> $GITHUB_OUTPUT
+          echo "base_version=${BASE_VERSION}" >> $GITHUB_OUTPUT
+          
+          echo "💡 Commit message: ${COMMIT_MSG}"
+
+      - name: Create marker commit on main for initial pre-release
+        if: inputs.release_type != 'latest' && steps.check-maintenance-branch.outputs.exists == 'false' && github.ref_name == 'main'
+        run: |
+          echo "📝 Creating marker commit on main for initial pre-release..."
+          
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          
+          # Create an empty commit on main to mark the pre-release creation
+          git checkout main
+          git commit --allow-empty -m "${{ steps.pr-details.outputs.commit_msg }}"
+          git push origin main
+          
+          echo "✅ Created marker commit on main: ${{ steps.pr-details.outputs.commit_msg }}"
 
       - name: Create Pull Request
         uses: peter-evans/create-pull-request@v5
