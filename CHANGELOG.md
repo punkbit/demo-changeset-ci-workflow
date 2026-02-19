@@ -1,5 +1,19 @@
 # @punkbit/demo-changeset-ci-workflow
 
+## 1.0.0-test.3
+
+### Major Changes
+
+- 79fe2f6: introduced feat ABC
+
+### Minor Changes
+
+- 6dbf60c: patch 1234
+
+### Patch Changes
+
+- 2cab806: fixed patch 123
+
 ## 1.0.0-test.2
 
 ### Minor Changes
