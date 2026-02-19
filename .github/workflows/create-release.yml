@@ -39,11 +39,14 @@ jobs:
           echo "🔍 Checking if commit $COMMIT_SHA can commit to main..."
           
           COMMIT_MSG=$(git log -1 --format=%s "$COMMIT_SHA")
-          
+
+          OUTPUT=$(.scripts/verify-release-commit "$COMMIT_MSG")
+          EXIT_CODE=$?
+
           # WARNING: This is coupled with generate release commit
           # if you need to modify, apply the changes accordingly
           # Script outputs "VERSION RELEASE_TYPE" on success (e.g., "1.2.3 latest")
-          if OUTPUT=$(.scripts/verify-release-commit "$COMMIT_MSG"); then
+          if [[ "$EXIT_CODE" -eq 0 ]]; then
             VERSION=$(echo "$OUTPUT" | awk '{print $1}')
             RELEASE_TYPE=$(echo "$OUTPUT" | awk '{print $2}')
             echo "✅ Detected release PR merge for version $VERSION ($RELEASE_TYPE)"
