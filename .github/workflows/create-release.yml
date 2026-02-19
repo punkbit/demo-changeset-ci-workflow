@@ -32,6 +32,8 @@ jobs:
 
       - name: Maintenance branch safeguard check
         run: |
+          set -x
+          
           COMMIT_SHA="${{ github.sha }}"          
           COMMIT_MSG=$(git log -1 --format=%s "$COMMIT_SHA")
           OUTPUT=$(.scripts/verify-release-commit "$COMMIT_MSG")
