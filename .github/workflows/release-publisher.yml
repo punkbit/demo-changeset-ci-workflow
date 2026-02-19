@@ -22,6 +22,7 @@ jobs:
           fetch-depth: 0
           token: ${{ secrets.GITHUB_TOKEN }}
 
+      # TODO: Make reusable action as used with create-release
       - name: Verify release PR merge
         id: verify-merge
         run: |
@@ -44,7 +45,7 @@ jobs:
           else
             echo "⚠️ This is not a release PR merge. Skipping release."
             echo "is_release=false" >> $GITHUB_OUTPUT
-            exit 0
+            exit 1
           fi
 
       - name: Maintenance branch safeguard check

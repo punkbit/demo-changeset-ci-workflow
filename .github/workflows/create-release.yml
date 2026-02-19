@@ -30,6 +30,33 @@ jobs:
           fetch-depth: 0
           persist-credentials: false
 
+      # TODO: Make reusable action as used with release-publisher
+      - name: Verify if can commit to main
+        if: github.ref == 'refs/heads/main'
+        run: |
+          COMMIT_SHA="${{ github.sha }}"
+          
+          echo "🔍 Checking if commit $COMMIT_SHA can commit to main..."
+          
+          COMMIT_MSG=$(git log -1 --format=%s "$COMMIT_SHA")
+          
+          # WARNING: This is coupled with generate release commit
+          # if you need to modify, apply the changes accordingly
+          # Script outputs "VERSION RELEASE_TYPE" on success (e.g., "1.2.3 latest")
+          if OUTPUT=$(.scripts/verify-release-commit "$COMMIT_MSG"); then
+            VERSION=$(echo "$OUTPUT" | awk '{print $1}')
+            RELEASE_TYPE=$(echo "$OUTPUT" | awk '{print $2}')
+            echo "✅ Detected release PR merge for version $VERSION ($RELEASE_TYPE)"
+          else
+            BASE_VERSION=$(echo "$VERSION" | grep -oE '^[0-9]+\.[0-9]+\.[0-9]+')
+            MAINTENANCE_BRANCH="chore/v${BASE_VERSION}"
+
+            echo "⚠️ A branch for $VERSION pre-releases or maintenance already exist! Are you trying to update an existing older or pre-release version?"
+            echo "💡 Please checkout the branch $MAINTENANCE_BRANCH and create the release from there to ensure proper version line maintenance, please!"
+
+            exit 1
+          fi
+
       - name: Setup Node.js
         uses: actions/setup-node@v6
         with:
