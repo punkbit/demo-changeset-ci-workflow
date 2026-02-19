@@ -81,7 +81,7 @@ jobs:
           echo "💡 Current tag is $CURRENT_TAG"
 
       - name: Switch release mode
-        if: steps.check-prerelease.outputs.prerelease == 'true' && inputs.release_type == 'latest' && inputs.release_type == 'maintenance'
+        if: steps.check-prerelease.outputs.prerelease == 'true' && (inputs.release_type == 'latest' || inputs.release_type == 'maintenance')
         run: |
           echo "Must exit pre-release mode..."
 
