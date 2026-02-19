@@ -1,6 +1,6 @@
 {
   "mode": "pre",
-  "tag": "test",
+  "tag": "rc",
   "initialVersions": {
     "@punkbit/demo-changeset-ci-workflow": "1.1.0-test.0"
   },
