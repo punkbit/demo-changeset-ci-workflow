@@ -13,12 +13,12 @@ on:
           - latest
         default: 'test'
 
-# TODO: Make sure pre-release cannot make "latest"
-# release from non main branch, e.g. chore/v1.1.0
 
 jobs:
   create-release-pr:
     name: Create Release PR
+    # IMPORTANT: maintenance branches cannot release type "latest"
+    if: github.ref_name == 'main' || (github.ref_name != 'main' && inputs.release_type != 'latest')
     runs-on: ubuntu-latest
     permissions:
       contents: write
