@@ -134,9 +134,12 @@ jobs:
             TAG=$(node -p "require('./.changeset/pre.json').tag")
             echo "prerelease=true" >> $GITHUB_OUTPUT
             echo "tag=$TAG" >> $GITHUB_OUTPUT
-          else
+          elif [[ "$CURRENT_BRANCH" == "main" ]]; then
             echo "prerelease=false" >> $GITHUB_OUTPUT
             echo "tag=latest" >> $GITHUB_OUTPUT
+          else
+            echo "prerelease=false" >> $GITHUB_OUTPUT
+            echo "tag=maintenance" >> $GITHUB_OUTPUT
           fi
 
           echo "📦 Package: $PKG_NAME@$VERSION"

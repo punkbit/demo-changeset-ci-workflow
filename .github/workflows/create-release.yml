@@ -11,6 +11,7 @@ on:
           - test
           - rc
           - latest
+          - maintenance
         default: 'test'
 
 
