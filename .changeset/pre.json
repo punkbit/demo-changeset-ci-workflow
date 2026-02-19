@@ -5,6 +5,7 @@
     "@punkbit/demo-changeset-ci-workflow": "1.0.0"
   },
   "changesets": [
+    "cool-rooms-begin",
     "tall-areas-jump"
   ]
 }
