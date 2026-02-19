@@ -1,5 +1,26 @@
 # @punkbit/demo-changeset-ci-workflow
 
+## 1.0.0
+
+### Major Changes
+
+- 86f65f9: super feature
+- 79fe2f6: introduced feat ABC
+
+### Minor Changes
+
+- 2becc8b: introduced chore changes A
+- 139b4bf: introduced a new document
+- 34b400e: introduced a cool feature
+
+### Patch Changes
+
+- 5d3cce6: now it did change the greeting
+- 9b06c48: refactored showing the package version handler
+- 2cab806: fixed patch 123
+- 905dd38: change greeting
+- 2c11a81: added a security path
+
 ## 1.0.0-rc.3
 
 ### Major Changes
