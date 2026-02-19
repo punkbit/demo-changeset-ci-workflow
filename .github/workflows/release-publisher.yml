@@ -17,7 +17,7 @@ jobs:
       pull-requests: read
     steps:
       - name: Checkout Repo
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
         with:
           fetch-depth: 0
           token: ${{ secrets.GITHUB_TOKEN }}
@@ -31,24 +31,21 @@ jobs:
           
           COMMIT_MSG=$(git log -1 --pretty=%B "$COMMIT_SHA")
           
-          if [[ ! "$COMMIT_MSG" =~ chore:\ 🤖\ release\ v[0-9]+\.[0-9]+\.[0-9]+.* ]]; then
+          # WARNING: This is coupled with generate release commit
+          # if you need to modify, apply the changes accordingly
+          # Script outputs "VERSION RELEASE_TYPE" on success (e.g., "1.2.3 latest")
+          if OUTPUT=$(.scripts/verify-release-commit "$COMMIT_MSG"); then
+            VERSION=$(echo "$OUTPUT" | awk '{print $1}')
+            RELEASE_TYPE=$(echo "$OUTPUT" | awk '{print $2}')
+            echo "✅ Detected release PR merge for version $VERSION ($RELEASE_TYPE)"
+            echo "is_release=true" >> $GITHUB_OUTPUT
+            echo "version=$VERSION" >> $GITHUB_OUTPUT
+            echo "tag=v$VERSION" >> $GITHUB_OUTPUT
+          else
             echo "⚠️ This is not a release PR merge. Skipping release."
             echo "is_release=false" >> $GITHUB_OUTPUT
             exit 0
           fi
-          
-          VERSION=$(echo "$COMMIT_MSG" | grep -oE 'v[0-9]+\.[0-9]+\.[0-9]+(-[a-zA-Z0-9.]+)?' | head -1 | sed 's/^v//')
-          
-          if [[ -z "$VERSION" ]]; then
-            echo "⚠️ Could not extract version from commit message. Skipping release."
-            echo "is_release=false" >> $GITHUB_OUTPUT
-            exit 0
-          fi
-          
-          echo "✅ Detected release PR merge for version $VERSION"
-          echo "is_release=true" >> $GITHUB_OUTPUT
-          echo "version=$VERSION" >> $GITHUB_OUTPUT
-          echo "tag=v$VERSION" >> $GITHUB_OUTPUT
 
       - name: Maintenance branch safeguard check
         if: steps.verify-merge.outputs.is_release == 'true'
@@ -100,9 +97,9 @@ jobs:
 
       - name: Setup Node.js
         if: steps.verify-merge.outputs.is_release == 'true'
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v6
         with:
-          node-version: 20
+          node-version: '23.x'
           registry-url: 'https://registry.npmjs.org'
 
       - name: Upgrade npm for OIDC support
@@ -111,13 +108,16 @@ jobs:
           npm install -g npm@latest
           echo "npm version: $(npm --version)"
 
+      - name: Enable Corepack
+        run: corepack enable
+
       - name: Install Dependencies
         if: steps.verify-merge.outputs.is_release == 'true'
-        run: npm install
+        run: yarn install --frozen-lockfile
 
       - name: Build package
         if: steps.verify-merge.outputs.is_release == 'true'
-        run: npm run build
+        run: yarn build
 
       - name: Get package info
         if: steps.verify-merge.outputs.is_release == 'true'
@@ -140,13 +140,13 @@ jobs:
           echo "📦 Package: $PKG_NAME@$VERSION"
           echo "🏷️  npm tag: $TAG"
 
-      - name: Publish to npm with OIDC provenance
+      - name: Publish to npm over OpenID Connect (OIDC)
         if: steps.verify-merge.outputs.is_release == 'true'
         run: |
-          npm publish \
-          --access public \
-          --provenance \
-          --tag ${{ steps.package-info.outputs.tag }}
+          yarn npm publish \
+            --access public \
+            --provenance \
+            --tag ${{ steps.package-info.outputs.tag }}
 
       - name: Extract changelog
         if: steps.verify-merge.outputs.is_release == 'true'

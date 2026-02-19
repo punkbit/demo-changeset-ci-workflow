@@ -4,6 +4,7 @@
   "description": "Demo package for showcasing changeset-based CI/CD workflow",
   "type": "module",
   "license": "MIT",
+  "packageManager": "yarn@4.6.0",
   "files": [
     "dist"
   ],
@@ -35,6 +36,6 @@
     "typescript": "^5.5.3"
   },
   "engines": {
-    "node": ">=18"
+    "node": ">=23"
   }
 }
