@@ -65,7 +65,7 @@ jobs:
 
           if [[ "$CURRENT_BRANCH" == "main" ]]; then
             if git ls-remote --exit-code --heads origin "$MAINTENANCE_BRANCH" >/dev/null 2>&1; then
-              echo "👹 Oops! Maintenance branch '$MAINTENANCE_BRANCH' already exists."
+              echo "⚠️ WARNING: Maintenance branch '$MAINTENANCE_BRANCH' already exists. Are you trying to update an existing pre-release version?"
               echo "💡 Please checkout the branch $MAINTENANCE_BRANCH and create the release from there to ensure proper version line maintenance, please!"
               exit 1
             fi
