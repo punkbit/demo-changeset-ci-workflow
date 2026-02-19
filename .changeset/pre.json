@@ -1,11 +1,12 @@
 {
   "mode": "pre",
-  "tag": "rc",
+  "tag": "test",
   "initialVersions": {
     "@punkbit/demo-changeset-ci-workflow": "1.1.0-test.0"
   },
   "changesets": [
     "eight-stars-act",
-    "tall-areas-jump"
+    "tall-areas-jump",
+    "tall-doors-film"
   ]
 }
