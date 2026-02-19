@@ -1,8 +1,8 @@
 {
   "mode": "pre",
-  "tag": "rc",
+  "tag": "maintenance",
   "initialVersions": {
-    "@punkbit/demo-changeset-ci-workflow": "1.1.0-test.1"
+    "@punkbit/demo-changeset-ci-workflow": "1.1.0-rc.2"
   },
   "changesets": [
     "eight-stars-act",
