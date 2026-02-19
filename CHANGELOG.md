@@ -1,5 +1,12 @@
 # @punkbit/demo-changeset-ci-workflow
 
+## 1.1.0
+
+### Minor Changes
+
+- 5e1434b: PATCH 19feb18h47
+- 00e158b: add aptch 19feb14h31
+
 ## 1.1.0-rc.1
 
 ### Minor Changes
