@@ -21,7 +21,7 @@ if [[ ! "$VERSION" =~ ^[0-9]+\.[0-9]+\.[0-9]+(-[a-zA-Z0-9.]+)?$ ]]; then
   exit 1
 fi
 
-if [[ ! "$RELEASE_TYPE" =~ ^(latest|rc|test)$ ]]; then
+if [[ ! "$RELEASE_TYPE" =~ ^(latest|rc|test|maintenance)$ ]]; then
   echo "👹 Oops! Invalid release type '$RELEASE_TYPE'"
   echo "💡 Expected one of latest, rc or test"
 
