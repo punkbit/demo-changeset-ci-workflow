@@ -31,7 +31,7 @@ jobs:
           persist-credentials: false
 
       # TODO: Make reusable action as used with release-publisher
-      - name: Verify if can commit to main
+      - name: Commit to main checkup
         if: github.ref == 'refs/heads/main'
         run: |
           COMMIT_SHA="${{ github.sha }}"
@@ -51,9 +51,10 @@ jobs:
             BASE_VERSION=$(echo "$VERSION" | grep -oE '^[0-9]+\.[0-9]+\.[0-9]+')
             MAINTENANCE_BRANCH="chore/v${BASE_VERSION}"
 
-            echo "⚠️ A branch for $VERSION pre-releases or maintenance already exist! Are you trying to update an existing older or pre-release version?"
-            echo "💡 Please checkout the branch $MAINTENANCE_BRANCH and create the release from there to ensure proper version line maintenance, please!"
+            echo "⚠️ A branch for $VERSION pre-releases or maintenance already exist! Are you trying to update an existing older or pre-release version?" >&2
+            echo "💡 Please checkout the branch $MAINTENANCE_BRANCH and create the release from there to ensure proper version line maintenance, please!" >&2
 
+            sleep 1
             exit 1
           fi
 
