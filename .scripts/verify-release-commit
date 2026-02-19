@@ -13,7 +13,7 @@ fi
 
 COMMIT_MSG="$1"
 
-RELEASE_PATTERN='^chore: 🤖 release v([0-9]+\.[0-9]+\.[0-9]+(-[a-zA-Z0-9.]+)?) \((latest|rc|test)\)$'
+RELEASE_PATTERN='^chore: 🤖 release v([0-9]+\.[0-9]+\.[0-9]+(-[a-zA-Z0-9.]+)?) \((latest|rc|test)\)( \(#[0-9]+\)| #[0-9]+)?$'
 
 if [[ -z "$COMMIT_MSG" ]]; then
   echo "👹 Oops! Commit message is empty"
@@ -40,8 +40,8 @@ if [[ ! "$COMMIT_MSG" =~ v[0-9]+\.[0-9]+\.[0-9]+ ]]; then
   exit 1
 fi
 
-if [[ ! "$COMMIT_MSG" =~ \((latest|rc|test)\)$ ]]; then
-  echo "🦖 Skip! Commit message does not end with a valid release type"
+if [[ ! "$COMMIT_MSG" =~ \((latest|rc|test)\) ]]; then
+  echo "🦖 Skip! Commit message does not contain a valid release type"
   exit 1
 fi
 
@@ -50,8 +50,13 @@ if [[ ! "$COMMIT_MSG" =~ $RELEASE_PATTERN ]]; then
   exit 1
 fi
 
-VERSION=$(echo "$COMMIT_MSG" | sed -n 's/^chore: 🤖 release v\([0-9.a-zA-Z-]*\) (\(.*\))$/\1/p')
-RELEASE_TYPE=$(echo "$COMMIT_MSG" | sed -n 's/^chore: 🤖 release v\([0-9.a-zA-Z-]*\) (\(.*\))$/\2/p')
+if [[ "$COMMIT_MSG" =~ ^chore:\ 🤖\ release\ v([0-9.a-zA-Z-]+)\ \((latest|rc|test)\) ]]; then
+  VERSION="${BASH_REMATCH[1]}"
+  RELEASE_TYPE="${BASH_REMATCH[2]}"
+else
+  echo "🦖 Skip! Failed to extract version and release type"
+  exit 1
+fi
 
 echo "${VERSION} ${RELEASE_TYPE}"
 
