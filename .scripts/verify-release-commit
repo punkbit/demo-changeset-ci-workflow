@@ -13,7 +13,7 @@ fi
 
 COMMIT_MSG="$1"
 
-RELEASE_PATTERN='^chore: 🤖 release v([0-9]+\.[0-9]+\.[0-9]+(-[a-zA-Z0-9.]+)?) \((latest|rc|test)\)( \(#[0-9]+\)| #[0-9]+)?$'
+RELEASE_PATTERN='^chore: 🤖 release v([0-9]+\.[0-9]+\.[0-9]+(-[a-zA-Z0-9.]+)?) \((latest|rc|test|maintenance)\)( \(#[0-9]+\)| #[0-9]+)?$'
 
 if [[ -z "$COMMIT_MSG" ]]; then
   echo "👹 Oops! Commit message is empty"
@@ -40,7 +40,7 @@ if [[ ! "$COMMIT_MSG" =~ v[0-9]+\.[0-9]+\.[0-9]+ ]]; then
   exit 1
 fi
 
-if [[ ! "$COMMIT_MSG" =~ \((latest|rc|test)\) ]]; then
+if [[ ! "$COMMIT_MSG" =~ \((latest|rc|test|maintenance)\) ]]; then
   echo "🦖 Skip! Commit message does not contain a valid release type"
   exit 1
 fi
@@ -50,7 +50,7 @@ if [[ ! "$COMMIT_MSG" =~ $RELEASE_PATTERN ]]; then
   exit 1
 fi
 
-if [[ "$COMMIT_MSG" =~ ^chore:\ 🤖\ release\ v([0-9.a-zA-Z-]+)\ \((latest|rc|test)\) ]]; then
+if [[ "$COMMIT_MSG" =~ ^chore:\ 🤖\ release\ v([0-9.a-zA-Z-]+)\ \((latest|rc|test|maintenance)\) ]]; then
   VERSION="${BASH_REMATCH[1]}"
   RELEASE_TYPE="${BASH_REMATCH[2]}"
 else
