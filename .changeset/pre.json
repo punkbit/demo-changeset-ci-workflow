@@ -1,17 +1,19 @@
 {
   "mode": "pre",
-  "tag": "test",
+  "tag": "rc",
   "initialVersions": {
-    "@punkbit/demo-changeset-ci-workflow": "1.0.0-rc.1"
+    "@punkbit/demo-changeset-ci-workflow": "1.0.0-test.2"
   },
   "changesets": [
     "clear-grapes-fetch",
     "clever-areas-change",
     "clever-lands-bake",
     "hungry-banks-sip",
+    "little-hornets-travel",
     "proud-camels-stick",
     "shaggy-drinks-trade",
     "slick-deer-teach",
+    "thin-islands-draw",
     "whole-berries-win"
   ]
 }
