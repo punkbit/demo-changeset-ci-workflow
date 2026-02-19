@@ -32,8 +32,6 @@ jobs:
 
       - name: Maintenance branch safeguard check
         run: |
-          set -x
-
           VERSION=$(node -p "require('./package.json').version")
           CURRENT_BRANCH="${{ github.ref_name }}"
 
