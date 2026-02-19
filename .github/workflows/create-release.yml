@@ -33,12 +33,8 @@ jobs:
       - name: Maintenance branch safeguard check
         run: |
           set -x
-          
-          COMMIT_SHA="${{ github.sha }}"          
-          COMMIT_MSG=$(git log -1 --format=%s "$COMMIT_SHA")
-          OUTPUT=$(.scripts/verify-release-commit "$COMMIT_MSG")
-          VERSION=$(echo "$OUTPUT" | awk '{print $1}')
-          RELEASE_TYPE=$(echo "$OUTPUT" | awk '{print $2}')
+
+          VERSION=$(node -p "require('./package.json').version")
           CURRENT_BRANCH="${{ github.ref_name }}"
 
           BASE_VERSION=$(echo "$VERSION" | grep -oE '^[0-9]+\.[0-9]+\.[0-9]+')
