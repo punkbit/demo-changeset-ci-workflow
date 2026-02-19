@@ -13,6 +13,9 @@ on:
           - latest
         default: 'test'
 
+# TODO: Make sure pre-release cannot make "latest"
+# release from non main branch, e.g. chore/v1.1.0
+
 jobs:
   create-release-pr:
     name: Create Release PR
