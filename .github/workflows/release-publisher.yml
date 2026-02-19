@@ -145,7 +145,8 @@ jobs:
       - name: Publish to npm over OpenID Connect (OIDC)
         if: steps.verify-merge.outputs.is_release == 'true'
         run: |
-          yarn npm publish \
+          # WARNING: It's preferred NPM for publishing
+          npm publish \
             --access public \
             --provenance \
             --tag ${{ steps.package-info.outputs.tag }}
