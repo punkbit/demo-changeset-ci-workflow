@@ -1,0 +1,10 @@
+{
+  "mode": "pre",
+  "tag": "rc",
+  "initialVersions": {
+    "@punkbit/demo-changeset-ci-workflow": "1.0.0"
+  },
+  "changesets": [
+    "tall-areas-jump"
+  ]
+}
