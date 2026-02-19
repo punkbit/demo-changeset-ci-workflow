@@ -52,6 +52,7 @@ jobs:
 
       - name: Maintenance branch safeguard check
         if: steps.verify-merge.outputs.is_release == 'true'
+        id: safeguard
         run: |
           VERSION="${{ steps.verify-merge.outputs.version }}"
           CURRENT_BRANCH="${{ github.ref_name }}"
@@ -61,23 +62,88 @@ jobs:
 
           echo "🔍 Checking maintenance branch safeguard..."
           echo "🤖 Current branch is $CURRENT_BRANCH"
+          echo "🤖 Base version is $BASE_VERSION"
           echo "🤖 Maintenance branch is $MAINTENANCE_BRANCH"
 
+          # Check if this is a pre-release or latest release
+          IS_PRERELEASE=false
+          if [[ "$VERSION" =~ -[a-zA-Z0-9.]+$ ]]; then
+            IS_PRERELEASE=true
+          fi
+
+          echo "is_prerelease=$IS_PRERELEASE" >> $GITHUB_OUTPUT
+          echo "base_version=$BASE_VERSION" >> $GITHUB_OUTPUT
+          echo "maintenance_branch=$MAINTENANCE_BRANCH" >> $GITHUB_OUTPUT
+
           if [[ "$CURRENT_BRANCH" == "main" ]]; then
-            if git ls-remote --exit-code --heads origin "$MAINTENANCE_BRANCH" >/dev/null 2>&1; then
-              echo "👹 Oops! Maintenance branch '$MAINTENANCE_BRANCH' already exists."
-              echo "💡 Please checkout the branch $MAINTENANCE_BRANCH and create the release from there to ensure proper version line maintenance, please!"
-              exit 1
+            if [[ "$IS_PRERELEASE" == "true" ]]; then
+              # Pre-releases from main: maintenance branch must NOT exist
+              if git ls-remote --exit-code --heads origin "$MAINTENANCE_BRANCH" >/dev/null 2>&1; then
+                echo "👹 Oops! Maintenance branch '$MAINTENANCE_BRANCH' already exists."
+                echo "💡 Pre-releases from main are only allowed before the maintenance branch is created."
+                echo "💡 Please checkout the branch $MAINTENANCE_BRANCH and create the pre-release from there."
+                exit 1
+              fi
+            else
+              # Latest releases from main: maintenance branch MUST exist
+              if ! git ls-remote --exit-code --heads origin "$MAINTENANCE_BRANCH" >/dev/null 2>&1; then
+                echo "👹 Oops! Maintenance branch '$MAINTENANCE_BRANCH' does not exist."
+                echo "💡 Latest releases require a pre-release first. Please create a test or rc release."
+                exit 1
+              fi
+              echo "✅ Maintenance branch '$MAINTENANCE_BRANCH' exists for latest release"
             fi
           fi
 
           echo "✅ Maintenance branch safeguard passed"
+
+      - name: Verify main is up-to-date with maintenance branch
+        if: steps.verify-merge.outputs.is_release == 'true' && steps.safeguard.outputs.is_prerelease == 'false' && github.ref_name == 'main'
+        run: |
+          MAINTENANCE_BRANCH="${{ steps.safeguard.outputs.maintenance_branch }}"
+          COMMIT_SHA="${{ github.sha }}"
+
+          echo "🔍 Verifying main contains all commits from $MAINTENANCE_BRANCH..."
+
+          # Fetch maintenance branch
+          git fetch origin "$MAINTENANCE_BRANCH:$MAINTENANCE_BRANCH"
+
+          # Get the latest commit on maintenance branch
+          MAINTENANCE_HEAD=$(git rev-parse "$MAINTENANCE_BRANCH")
+          echo "🤖 Maintenance branch HEAD: $MAINTENANCE_HEAD"
+
+          # Check if maintenance branch is an ancestor of current main commit
+          if git merge-base --is-ancestor "$MAINTENANCE_HEAD" "$COMMIT_SHA"; then
+            echo "✅ Main is up-to-date with maintenance branch"
+          else
+            echo "👹 Oops! Main is missing commits from maintenance branch '$MAINTENANCE_BRANCH'."
+            echo "💡 Please merge the maintenance branch into main first, or resolve any conflicts."
+            exit 1
+          fi
 
       - name: Skip if not release
         if: steps.verify-merge.outputs.is_release == 'false'
         run: |
           echo "⏭️ Not a release PR merge. Stopping here."
           exit 0
+
+      - name: Exit pre-release mode for latest
+        if: steps.verify-merge.outputs.is_release == 'true' && steps.safeguard.outputs.is_prerelease == 'false'
+        run: |
+          echo "🔄 Exiting pre-release mode for latest release..."
+          
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          
+          # Remove pre.json to exit pre-release mode
+          if [[ -f .changeset/pre.json ]]; then
+            rm .changeset/pre.json
+            git add .changeset/pre.json
+            git commit -m "chore: exit pre-release mode for latest release"
+            echo "✅ Exited pre-release mode"
+          else
+            echo "⚠️ No pre.json found, already in release mode"
+          fi
 
       - name: Create and push tag
         if: steps.verify-merge.outputs.is_release == 'true'
@@ -185,6 +251,7 @@ jobs:
           VERSION="${{ steps.verify-merge.outputs.version }}"
           COMMIT_SHA="${{ github.sha }}"
           CURRENT_BRANCH="${{ github.ref_name }}"
+          IS_PRERELEASE="${{ steps.safeguard.outputs.is_prerelease }}"
 
           BASE_VERSION=$(echo "$VERSION" | grep -oE '^[0-9]+\.[0-9]+\.[0-9]+')
           MAINTENANCE_BRANCH="chore/v${BASE_VERSION}"
@@ -193,15 +260,35 @@ jobs:
           echo "🤖 Version is $VERSION"
           echo "🤖 Base version is $BASE_VERSION"
           echo "🤖 Maintenance branch is $MAINTENANCE_BRANCH"
+          echo "🤖 Is prerelease: $IS_PRERELEASE"
+          echo "🤖 Current branch: $CURRENT_BRANCH"
 
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
 
           if git ls-remote --exit-code --heads origin "$MAINTENANCE_BRANCH" >/dev/null 2>&1; then
             echo "📋 Maintenance branch '$MAINTENANCE_BRANCH' already exists"
-            echo "🔄 Updating branch with new release commit..."
 
-            if [[ "$CURRENT_BRANCH" == "$MAINTENANCE_BRANCH" ]]; then
+            if [[ "$CURRENT_BRANCH" == "main" && "$IS_PRERELEASE" == "false" ]]; then
+              # Latest release from main: merge main into maintenance branch
+              echo "🔄 Latest release from main - merging main into maintenance branch..."
+              
+              git fetch origin "$MAINTENANCE_BRANCH:$MAINTENANCE_BRANCH"
+              git checkout "$MAINTENANCE_BRANCH"
+              
+              echo "➡️  Attempting to merge main ($COMMIT_SHA) into $MAINTENANCE_BRANCH..."
+              
+              if git merge "$COMMIT_SHA" -m "chore: merge main into $MAINTENANCE_BRANCH for latest release v$VERSION"; then
+                echo "✅ Successfully merged main into $MAINTENANCE_BRANCH"
+                git push origin "$MAINTENANCE_BRANCH"
+                echo "✅ Updated maintenance branch '$MAINTENANCE_BRANCH'"
+              else
+                echo "👹 Oops! Merge failed, conflicts detected..."
+                echo "💡 Please manually resolve the conflicts by updating $MAINTENANCE_BRANCH with main first."
+                exit 1
+              fi
+            elif [[ "$CURRENT_BRANCH" == "$MAINTENANCE_BRANCH" ]]; then
+              # Already on maintenance branch
               echo "✅ Already on maintenance branch, merging release commit..."
 
               if git merge "$COMMIT_SHA" -m "chore: merge release v$VERSION into $MAINTENANCE_BRANCH"; then
@@ -214,6 +301,7 @@ jobs:
                 exit 1
               fi
             else
+              # Pre-release from another branch, merge into maintenance branch
               git fetch origin "$MAINTENANCE_BRANCH:$MAINTENANCE_BRANCH"
               git checkout "$MAINTENANCE_BRANCH"
 

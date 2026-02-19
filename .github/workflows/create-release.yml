@@ -50,17 +50,12 @@ jobs:
 
           echo "💡 Current tag is $CURRENT_TAG"
 
-      - name: Switch release mode
-        if: steps.check-prerelease.outputs.prerelease == 'true' && inputs.release_type == 'latest'
+      - name: Validate latest release must be from main
+        if: inputs.release_type == 'latest' && github.ref_name != 'main'
         run: |
-          echo "Must exit pre-release mode..."
-
-          if ! npx changeset pre exit; then
-            echo "👹 Oops! Failed to exit pre-release mode for some reason..."
-            exit 1
-          else
-            echo "✅ Exited pre-release mode"
-          fi
+          echo "👹 Oops! Latest releases must be created from the 'main' branch."
+          echo "💡 Current branch is '${{ github.ref_name }}'. Please switch to 'main' and try again."
+          exit 1
 
       - name: Switch prerelease mode
         if: steps.check-prerelease.outputs.prerelease == 'true' && steps.check-prerelease.outputs.current_tag != inputs.release_type && inputs.release_type != 'latest'
@@ -85,6 +80,16 @@ jobs:
           echo "👹 Oops! Cannot release 'latest' without a pre-release version first..."
           echo "💡 You must release through 'test' or 'rc' before creating a stable release."
           exit 1
+
+      - name: Validate maintenance branch exists for latest release
+        if: inputs.release_type == 'latest'
+        run: |
+          echo "🔍 Checking if maintenance branch exists for latest release..."
+          
+          # Get the version that will be released (before versioning)
+          # We need to check what version changeset will compute
+          # For now, we'll check in the publisher - here we just verify we're on main
+          echo "✅ On main branch, maintenance branch check will happen in publisher"
 
       - name: Confirm production release
         if: inputs.release_type == 'latest'
