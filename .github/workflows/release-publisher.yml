@@ -45,7 +45,7 @@ jobs:
           else
             echo "⚠️ This is not a release PR merge. Skipping release."
             echo "is_release=false" >> $GITHUB_OUTPUT
-            exit 1
+            exit 0
           fi
 
       - name: Maintenance branch safeguard check
