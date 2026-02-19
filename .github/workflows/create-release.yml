@@ -81,6 +81,29 @@ jobs:
           echo "💡 You must release through 'test' or 'rc' before creating a stable release."
           exit 1
 
+      - name: Confirm production release
+        if: inputs.release_type == 'latest'
+        run: |
+          echo "⚠️WARNING: Creating a STABLE production release!"
+          echo "This will publish to npm with the 'latest' tag."
+          echo "Make sure you've reviewed all changes carefully, please!"
+
+      - name: Version package
+        id: version-package
+        run: |
+          echo "📦 Versioning packages..."
+          if ! npm run changeset:version; then
+            echo "👹 Oops! Failed to do changeset versioning for some reason..."
+            exit 1
+          else
+            echo "✅ Versioned package successfully!"
+          fi
+
+          VERSION=$(node -p "require('./package.json').version")
+          PKG_NAME=$(node -p "require('./package.json').name")
+          echo "version=$VERSION" >> $GITHUB_OUTPUT
+          echo "package_name=$PKG_NAME" >> $GITHUB_OUTPUT
+
       - name: Check if maintenance branch exists
         id: check-maintenance-branch
         run: |
@@ -105,29 +128,6 @@ jobs:
           echo "👹 Oops! Maintenance branch '${{ steps.check-maintenance-branch.outputs.maintenance_branch }}' does not exist."
           echo "💡 Latest releases require a pre-release first. Please create a test or rc release."
           exit 1
-
-      - name: Confirm production release
-        if: inputs.release_type == 'latest'
-        run: |
-          echo "⚠️WARNING: Creating a STABLE production release!"
-          echo "This will publish to npm with the 'latest' tag."
-          echo "Make sure you've reviewed all changes carefully, please!"
-
-      - name: Version package
-        id: version-package
-        run: |
-          echo "📦 Versioning packages..."
-          if ! npm run changeset:version; then
-            echo "👹 Oops! Failed to do changeset versioning for some reason..."
-            exit 1
-          else
-            echo "✅ Versioned package successfully!"
-          fi
-
-          VERSION=$(node -p "require('./package.json').version")
-          PKG_NAME=$(node -p "require('./package.json').name")
-          echo "version=$VERSION" >> $GITHUB_OUTPUT
-          echo "package_name=$PKG_NAME" >> $GITHUB_OUTPUT
 
       - name: Determine PR details
         id: pr-details
