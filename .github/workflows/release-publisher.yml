@@ -29,7 +29,7 @@ jobs:
           
           echo "🔍 Checking if commit $COMMIT_SHA is from a release PR merge..."
           
-          COMMIT_MSG=$(git log -1 --pretty=%B "$COMMIT_SHA")
+          COMMIT_MSG=$(git log -1 --format=%s "$COMMIT_SHA")
           
           # WARNING: This is coupled with generate release commit
           # if you need to modify, apply the changes accordingly
