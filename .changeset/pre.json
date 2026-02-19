@@ -1,8 +1,8 @@
 {
   "mode": "pre",
-  "tag": "test",
+  "tag": "rc",
   "initialVersions": {
-    "@punkbit/demo-changeset-ci-workflow": "1.1.0-test.0"
+    "@punkbit/demo-changeset-ci-workflow": "1.1.0-test.1"
   },
   "changesets": [
     "eight-stars-act",
