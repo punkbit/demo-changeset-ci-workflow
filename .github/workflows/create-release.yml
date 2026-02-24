@@ -14,7 +14,7 @@ on:
           - latest
         default: 'test'
       confirm_release_type:
-        description: 'Type the release type to confirm (e.g., "test", "rc", "stable", "latest")'
+        description: 'Type the release type to confirm (e.g., "test")'
         required: true
         type: string
       confirm_branch:
