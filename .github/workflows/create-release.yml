@@ -81,28 +81,6 @@ jobs:
 
           echo "🚀 Release confirmation passed! Proceeding with $RELEASE_TYPE release on $CURRENT_BRANCH"
 
-      - name: Maintenance branch safeguard check
-        run: |
-          VERSION=$(node -p "require('./package.json').version")
-          CURRENT_BRANCH="${{ github.ref_name }}"
-
-          BASE_VERSION=$(echo "$VERSION" | grep -oE '^[0-9]+\.[0-9]+\.[0-9]+')
-          MAINTENANCE_BRANCH="chore/v${BASE_VERSION}"
-
-          echo "🔍 Checking maintenance branch safeguard..."
-          echo "🤖 Current branch is $CURRENT_BRANCH"
-          echo "🤖 Maintenance branch is $MAINTENANCE_BRANCH"
-
-          if [[ "$CURRENT_BRANCH" == "main" ]]; then
-            if git ls-remote --exit-code --heads origin "$MAINTENANCE_BRANCH" >/dev/null 2>&1; then
-              echo "⚠️ WARNING: Maintenance branch '$MAINTENANCE_BRANCH' already exists. Are you trying to update an older or pre-release version?"
-              echo "💡 Please checkout the branch $MAINTENANCE_BRANCH and create the release from there to ensure proper version line maintenance, please!"
-              exit 1
-            fi
-          fi
-
-          echo "✅ Maintenance branch safeguard passed"
-
       - name: Setup Node.js
         uses: actions/setup-node@v6
         with:
@@ -188,6 +166,29 @@ jobs:
           PKG_NAME=$(node -p "require('./package.json').name")
           echo "version=$VERSION" >> $GITHUB_OUTPUT
           echo "package_name=$PKG_NAME" >> $GITHUB_OUTPUT
+
+      - name: Maintenance branch safeguard check
+        run: |
+          TARGET_VERSION="${{ steps.version-package.outputs.version }}"
+          CURRENT_BRANCH="${{ github.ref_name }}"
+
+          BASE_VERSION=$(echo "$TARGET_VERSION" | grep -oE '^[0-9]+\.[0-9]+\.[0-9]+')
+          MAINTENANCE_BRANCH="chore/v${BASE_VERSION}"
+
+          echo "🔍 Checking maintenance branch safeguard..."
+          echo "🤖 Current branch is $CURRENT_BRANCH"
+          echo "🤖 Target version is $TARGET_VERSION"
+          echo "🤖 Maintenance branch would be $MAINTENANCE_BRANCH"
+
+          if [[ "$CURRENT_BRANCH" == "main" ]]; then
+            if git ls-remote --exit-code --heads origin "$MAINTENANCE_BRANCH" >/dev/null 2>&1; then
+              echo "⚠️ WARNING: Maintenance branch '$MAINTENANCE_BRANCH' already exists for version $BASE_VERSION."
+              echo "💡 Please checkout the branch $MAINTENANCE_BRANCH and create the release from there to ensure proper version line maintenance."
+              exit 1
+            fi
+          fi
+
+          echo "✅ Maintenance branch safeguard passed"
 
       - name: Determine PR details
         id: pr-details
