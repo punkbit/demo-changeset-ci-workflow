@@ -206,7 +206,7 @@ jobs:
 
           if npm view "$PKG_NAME@$VERSION" version 2>/dev/null; then
             echo "👹 Oops! Version $VERSION of $PKG_NAME is already published on NPM!"
-            echo "💡 This usually means the release was already completed or a previous workflow run published it."
+            echo "💡 This typically means the release was already published, or a previous workflow run completed it. It may also occur if you're trying to promote a pre-release without any actual changes, e.g., promoting 2.0.1-test.0 (test) → 2.0.1-test.0 (rc) without a version bump which would make 2.0.1-rc.1 (rc). If that's the case, make sure to include a new changeset before retrying."
             exit 1
           fi
 
