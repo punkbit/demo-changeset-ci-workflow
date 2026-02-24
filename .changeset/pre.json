@@ -1,8 +1,8 @@
 {
   "mode": "pre",
-  "tag": "test",
+  "tag": "rc",
   "initialVersions": {
-    "@punkbit/demo-changeset-ci-workflow": "1.1.5"
+    "@punkbit/demo-changeset-ci-workflow": "1.2.0-test.0"
   },
   "changesets": [
     "fine-dolls-slide",
