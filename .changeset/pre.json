@@ -1,0 +1,8 @@
+{
+  "mode": "pre",
+  "tag": "test",
+  "initialVersions": {
+    "@punkbit/demo-changeset-ci-workflow": "1.1.1"
+  },
+  "changesets": []
+}
