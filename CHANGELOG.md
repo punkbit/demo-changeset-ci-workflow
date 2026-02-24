@@ -1,5 +1,11 @@
 # @punkbit/demo-changeset-ci-workflow
 
+## 1.1.2
+
+### Patch Changes
+
+- d2f214f: Add SOME CHANGE 202602241024
+
 ## 1.1.2-rc.0
 
 ### Patch Changes
