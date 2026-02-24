@@ -13,7 +13,14 @@ on:
           - stable
           - latest
         default: 'test'
-
+      confirm_release_type:
+        description: 'Type the release type to confirm (e.g., "test", "rc", "stable", "latest")'
+        required: true
+        type: string
+      confirm_branch:
+        description: 'For stable/latest: type the branch name to confirm (e.g., "main")'
+        required: false
+        type: string
 
 jobs:
   create-release-pr:
@@ -30,6 +37,49 @@ jobs:
         with:
           fetch-depth: 0
           persist-credentials: false
+
+      - name: Validate release confirmation
+        run: |
+          echo "🔐 Validating release confirmation..."
+
+          RELEASE_TYPE="${{ inputs.release_type }}"
+          CONFIRM_TYPE="${{ inputs.confirm_release_type }}"
+          CONFIRM_BRANCH="${{ inputs.confirm_branch }}"
+          CURRENT_BRANCH="${{ github.ref_name }}"
+
+          if [[ "$RELEASE_TYPE" != "$CONFIRM_TYPE" ]]; then
+            echo "❌ Release type confirmation mismatch!"
+            echo "   Selected: '$RELEASE_TYPE'"
+            echo "   Typed: '$CONFIRM_TYPE'"
+            echo ""
+            echo "💡 Please type the exact release type to confirm your selection."
+            exit 1
+          fi
+
+          echo "✅ Release type confirmed: $RELEASE_TYPE"
+
+          if [[ "$RELEASE_TYPE" == "stable" || "$RELEASE_TYPE" == "latest" ]]; then
+            if [[ -z "$CONFIRM_BRANCH" ]]; then
+              echo "❌ Branch confirmation required for production releases!"
+              echo "   Current branch: '$CURRENT_BRANCH'"
+              echo ""
+              echo "💡 Please type the branch name in 'confirm_branch' to proceed with a $RELEASE_TYPE release."
+              exit 1
+            fi
+
+            if [[ "$CURRENT_BRANCH" != "$CONFIRM_BRANCH" ]]; then
+              echo "❌ Branch confirmation mismatch!"
+              echo "   Current branch: '$CURRENT_BRANCH'"
+              echo "   Typed: '$CONFIRM_BRANCH'"
+              echo ""
+              echo "💡 Please type the exact branch name to confirm."
+              exit 1
+            fi
+
+            echo "✅ Branch confirmed: $CURRENT_BRANCH"
+          fi
+
+          echo "🚀 Release confirmation passed! Proceeding with $RELEASE_TYPE release on $CURRENT_BRANCH"
 
       - name: Maintenance branch safeguard check
         run: |
