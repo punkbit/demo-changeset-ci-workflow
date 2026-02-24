@@ -5,6 +5,8 @@
     "@punkbit/demo-changeset-ci-workflow": "2.0.1"
   },
   "changesets": [
-    "fancy-crabs-wave"
+    "fancy-crabs-wave",
+    "silly-maps-change",
+    "wacky-bars-fetch"
   ]
 }
