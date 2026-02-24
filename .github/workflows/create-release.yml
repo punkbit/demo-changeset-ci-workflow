@@ -96,9 +96,11 @@ jobs:
         id: check-prerelease
         run: |
           CURRENT_TAG="N/A"
+          IS_PRERELEASE="false"
 
           if [[ -f .changeset/pre.json ]]; then
             CURRENT_TAG=$(node -p "require('./.changeset/pre.json').tag")
+            IS_PRERELEASE="true"
             echo "prerelease=true" >> $GITHUB_OUTPUT
             echo "current_tag=$CURRENT_TAG" >> $GITHUB_OUTPUT
           else
@@ -107,7 +109,7 @@ jobs:
           fi
 
           echo "💡 Current tag is $CURRENT_TAG"
-          echo "💡 Current prerelease status is ${{ steps.check-prerelease.outputs.prerelease }}"
+          echo "💡 Current prerelease status is $IS_PRERELEASE"
 
       - name: Prevent promotion without changes
         if: steps.check-prerelease.outputs.prerelease == 'true' && steps.check-prerelease.outputs.current_tag != inputs.release_type
