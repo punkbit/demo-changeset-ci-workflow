@@ -1,5 +1,11 @@
 # @punkbit/demo-changeset-ci-workflow
 
+## 2.1.0-test.0
+
+### Minor Changes
+
+- 2843cf8: SOME CHANGE 202602241403
+
 ## 2.0.1
 
 ### Patch Changes
