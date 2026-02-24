@@ -108,6 +108,17 @@ jobs:
 
           echo "💡 Current tag is $CURRENT_TAG"
 
+      - name: Prevent promotion without changes
+        if: steps.check-prerelease.outputs.prerelease == 'true' && steps.check-prerelease.outputs.current_tag != inputs.release_type
+        run: |
+          CHANGESET_COUNT=$(find .changeset -name "*.md" ! -name "README.md" | wc -l | tr -d ' ')
+
+          if [[ "$CHANGESET_COUNT" -eq 0 ]]; then
+            echo "👹 Oops! Cannot promote from '${{ steps.check-prerelease.outputs.current_tag }}' to '${{ inputs.release_type }}' without new changes!"
+            echo "💡 Add a changeset first, e.g. yarn changeset:add, or stick with the current version as they'd be effectively the same."
+            exit 1
+          fi
+
       - name: Switch release mode
         if: steps.check-prerelease.outputs.prerelease == 'true' && (inputs.release_type == 'latest' || inputs.release_type == 'stable')
         run: |
