@@ -1,7 +1,7 @@
 import pkg from '../package.json';
 
 export function greet(name: string): string {
-  // THIS IS THE PATCH 19feb20h47 for rc
+  // SOME CHANGE 202602241011
   return `Hello, it's a patch over v1.1.0, ${name}!`;
 }
 
