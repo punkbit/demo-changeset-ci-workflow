@@ -1,0 +1,10 @@
+{
+  "mode": "pre",
+  "tag": "test",
+  "initialVersions": {
+    "@punkbit/demo-changeset-ci-workflow": "1.1.4"
+  },
+  "changesets": [
+    "silent-stars-warn"
+  ]
+}
