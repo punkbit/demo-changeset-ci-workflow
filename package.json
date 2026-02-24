@@ -1,6 +1,6 @@
 {
   "name": "@punkbit/demo-changeset-ci-workflow",
-  "version": "2.0.1-rc.1",
+  "version": "2.0.1-test.2",
   "description": "Demo package for showcasing changeset-based CI/CD workflow",
   "type": "module",
   "license": "MIT",
