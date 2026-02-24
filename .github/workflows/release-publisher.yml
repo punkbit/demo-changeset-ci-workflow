@@ -139,7 +139,7 @@ jobs:
             echo "tag=latest" >> $GITHUB_OUTPUT
           else
             echo "prerelease=false" >> $GITHUB_OUTPUT
-            echo "tag=maintenance" >> $GITHUB_OUTPUT
+            echo "tag=stable" >> $GITHUB_OUTPUT
           fi
 
           echo "📦 Package: $PKG_NAME@$VERSION"
