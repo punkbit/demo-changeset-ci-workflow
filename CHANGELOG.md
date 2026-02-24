@@ -1,5 +1,82 @@
 # @punkbit/demo-changeset-ci-workflow
 
+## 1.1.4
+
+### Patch Changes
+
+- ce5d74b: SOME CHANGE 202602241056
+
+## 1.1.4-rc.0
+
+### Patch Changes
+
+- ce5d74b: SOME CHANGE 202602241056
+
+## 1.1.3
+
+### Patch Changes
+
+- 19d39c7: SOME CHANGE 202602241038
+
+## 1.1.3-rc.0
+
+### Patch Changes
+
+- 19d39c7: SOME CHANGE 202602241038
+
+## 1.1.2
+
+### Patch Changes
+
+- d2f214f: Add SOME CHANGE 202602241024
+
+## 1.1.2-rc.0
+
+### Patch Changes
+
+- d2f214f: Add SOME CHANGE 202602241024
+
+## 1.1.1
+
+### Patch Changes
+
+- 8a4e114: Add SOME CHANGE 202602241011
+
+## 1.1.1-rc.0
+
+### Patch Changes
+
+- 8a4e114: Add SOME CHANGE 202602241011
+
+## 1.1.0
+
+### Minor Changes
+
+- 22ffc82: PATCH 19feb17h30
+- 00e158b: add aptch 19feb14h31
+- 4297bc0: add 19feb19h32
+
+### Patch Changes
+
+- 5cf067a: patch for rc
+- f1c8515: patch over v1.1.0
+
+## 1.1.0-rc.2
+
+### Patch Changes
+
+- 5cf067a: patch for rc
+
+## 1.1.0-test.1
+
+### Minor Changes
+
+- 4297bc0: add 19feb19h32
+
+### Patch Changes
+
+- f1c8515: patch over v1.1.0
+
 ## 1.1.0-test.0
 
 ### Minor Changes
