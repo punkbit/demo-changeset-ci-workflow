@@ -1,11 +1,14 @@
 {
   "mode": "pre",
-  "tag": "rc",
+  "tag": "test",
   "initialVersions": {
     "@punkbit/demo-changeset-ci-workflow": "1.2.0-test.0"
   },
   "changesets": [
+    "eight-apples-pick",
+    "famous-shirts-dream",
     "fine-dolls-slide",
+    "honest-grapes-send",
     "smooth-pianos-behave"
   ]
 }
