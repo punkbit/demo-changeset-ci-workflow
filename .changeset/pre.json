@@ -1,11 +1,12 @@
 {
   "mode": "pre",
-  "tag": "rc",
+  "tag": "test",
   "initialVersions": {
-    "@punkbit/demo-changeset-ci-workflow": "2.0.1-test.0"
+    "@punkbit/demo-changeset-ci-workflow": "2.0.1-rc.1"
   },
   "changesets": [
     "fifty-seals-begin",
+    "funky-pens-guess",
     "lazy-spies-grin"
   ]
 }
