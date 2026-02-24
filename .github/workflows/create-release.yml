@@ -107,6 +107,7 @@ jobs:
           fi
 
           echo "💡 Current tag is $CURRENT_TAG"
+          echo "💡 Current prerelease status is ${{ steps.check-prerelease.outputs.prerelease }}"
 
       - name: Prevent promotion without changes
         if: steps.check-prerelease.outputs.prerelease == 'true' && steps.check-prerelease.outputs.current_tag != inputs.release_type
