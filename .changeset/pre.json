@@ -1,0 +1,11 @@
+{
+  "mode": "pre",
+  "tag": "test",
+  "initialVersions": {
+    "@punkbit/demo-changeset-ci-workflow": "1.1.5"
+  },
+  "changesets": [
+    "fine-dolls-slide",
+    "smooth-pianos-behave"
+  ]
+}
