@@ -1,11 +1,12 @@
 {
   "mode": "pre",
-  "tag": "test",
+  "tag": "rc",
   "initialVersions": {
-    "@punkbit/demo-changeset-ci-workflow": "2.0.1"
+    "@punkbit/demo-changeset-ci-workflow": "2.2.0-test.0"
   },
   "changesets": [
     "fancy-crabs-wave",
+    "sharp-sails-repeat",
     "silly-maps-change",
     "wacky-bars-fetch"
   ]
