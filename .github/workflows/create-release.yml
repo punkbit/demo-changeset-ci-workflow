@@ -194,6 +194,21 @@ jobs:
           echo "version=$VERSION" >> $GITHUB_OUTPUT
           echo "package_name=$PKG_NAME" >> $GITHUB_OUTPUT
 
+      - name: Check if version already published
+        run: |
+          PKG_NAME="${{ steps.version-package.outputs.package_name }}"
+          VERSION="${{ steps.version-package.outputs.version }}"
+
+          echo "🔍 Checking if $PKG_NAME@$VERSION already exists on NPM..."
+
+          if npm view "$PKG_NAME@$VERSION" version 2>/dev/null; then
+            echo "👹 Oops! Version $VERSION of $PKG_NAME is already published on NPM!"
+            echo "💡 This usually means the release was already completed or a previous workflow run published it."
+            exit 1
+          fi
+
+          echo "✅ Version $VERSION is not yet published, safe to proceed."
+
       - name: Maintenance branch safeguard check
         run: |
           TARGET_VERSION="${{ steps.version-package.outputs.version }}"
