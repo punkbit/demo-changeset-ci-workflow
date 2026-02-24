@@ -1,0 +1,10 @@
+{
+  "mode": "pre",
+  "tag": "test",
+  "initialVersions": {
+    "@punkbit/demo-changeset-ci-workflow": "2.0.0"
+  },
+  "changesets": [
+    "fifty-seals-begin"
+  ]
+}
