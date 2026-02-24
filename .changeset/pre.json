@@ -1,12 +1,13 @@
 {
   "mode": "pre",
-  "tag": "test",
+  "tag": "rc",
   "initialVersions": {
-    "@punkbit/demo-changeset-ci-workflow": "2.0.1-rc.1"
+    "@punkbit/demo-changeset-ci-workflow": "2.0.1-test.2"
   },
   "changesets": [
     "fifty-seals-begin",
     "funky-pens-guess",
-    "lazy-spies-grin"
+    "lazy-spies-grin",
+    "light-deer-start"
   ]
 }
