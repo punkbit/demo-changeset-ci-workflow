@@ -1,5 +1,15 @@
 # @punkbit/demo-changeset-ci-workflow
 
+## 2.4.0-test.0
+
+### Minor Changes
+
+- f231ab3: Steve Monite - Only You
+- d589786: // SOME CHANGE 202602251708
+- 8a467eb: SOME CHANGE 202602241614
+- 9dfcabb: xxx
+- 1309a8f: / SOME CHANGE 202602241616
+
 ## 2.2.0
 
 ### Minor Changes

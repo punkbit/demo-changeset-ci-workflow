@@ -1,0 +1,14 @@
+{
+  "mode": "pre",
+  "tag": "test",
+  "initialVersions": {
+    "@punkbit/demo-changeset-ci-workflow": "2.3.0"
+  },
+  "changesets": [
+    "bright-cycles-hunt",
+    "dry-lies-glow",
+    "tasty-tips-check",
+    "tender-experts-boil",
+    "thick-feet-battle"
+  ]
+}
