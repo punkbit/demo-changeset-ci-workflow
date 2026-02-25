@@ -1,0 +1,12 @@
+{
+  "mode": "pre",
+  "tag": "test",
+  "initialVersions": {
+    "@punkbit/demo-changeset-ci-workflow": "2.2.0"
+  },
+  "changesets": [
+    "major-eels-lie",
+    "tasty-tips-check",
+    "thick-feet-battle"
+  ]
+}
