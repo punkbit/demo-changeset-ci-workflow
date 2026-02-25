@@ -8,6 +8,14 @@ jobs:
   test-slack:
     runs-on: ubuntu-latest
     steps:
+      # Join the channel first
+      - name: Join Slack channel
+        run: |
+          curl -s -X POST https://slack.com/api/conversations.join \
+            -H "Authorization: Bearer ${{ secrets.SLACK_BOT_TOKEN }}" \
+            -H "Content-Type: application/json" \
+            -d '{"channel": "C0AHYBADC9E"}' | jq .
+
       # Test 1: Using slack-github-action with method
       - name: Test 1 - slack-github-action v2
         id: slack1
