@@ -1,5 +1,11 @@
 # @punkbit/demo-changeset-ci-workflow
 
+## 2.5.0-test.0
+
+### Minor Changes
+
+- 0fd0a85: asas
+
 ## 2.4.0
 
 ### Minor Changes
