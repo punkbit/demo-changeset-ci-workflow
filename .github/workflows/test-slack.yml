@@ -13,5 +13,5 @@ jobs:
           method: chat.postMessage
           token: ${{ secrets.SLACK_BOT_TOKEN }}
           payload: |
-            channel: "#click-ui"
+            channel: "C0AHYBADC9E"
             text: "🧪 Test notification from GitHub Actions"
