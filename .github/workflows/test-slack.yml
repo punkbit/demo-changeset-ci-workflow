@@ -2,17 +2,58 @@ name: 🧪 Test Slack Notification
 
 on:
   workflow_dispatch:
-  push:
 
 jobs:
   test-slack:
     runs-on: ubuntu-latest
     steps:
-      - name: Send Slack notification
+      # Test 1: Using slack-github-action with method
+      - name: Test 1 - slack-github-action v2
+        id: slack1
+        continue-on-error: true
         uses: slackapi/slack-github-action@v2.1.1
         with:
           method: chat.postMessage
           token: ${{ secrets.SLACK_BOT_TOKEN }}
           payload: |
             channel: "C0AHYBADC9E"
-            text: "🧪 Test notification from GitHub Actions"
+            text: "🧪 Test 1: slack-github-action v2"
+
+      - name: Debug Test 1
+        if: always()
+        run: |
+          echo "Test 1 outcome: ${{ steps.slack1.outcome }}"
+          echo "Test 1 outputs: ${{ toJson(steps.slack1.outputs) }}"
+
+      # Test 2: Using curl directly (most reliable for debugging)
+      - name: Test 2 - Direct curl
+        id: slack2
+        continue-on-error: true
+        run: |
+          RESPONSE=$(curl -s -X POST https://slack.com/api/chat.postMessage \
+            -H "Authorization: Bearer ${{ secrets.SLACK_BOT_TOKEN }}" \
+            -H "Content-Type: application/json" \
+            -d '{
+              "channel": "C0AHYBADC9E",
+              "text": "🧪 Test 2: Direct curl"
+            }')
+          echo "Response: $RESPONSE"
+          echo "response=$RESPONSE" >> $GITHUB_OUTPUT
+
+      # Test 3: Check bot info and permissions
+      - name: Test 3 - Check auth
+        continue-on-error: true
+        run: |
+          echo "=== Auth Test ==="
+          curl -s -X POST https://slack.com/api/auth.test \
+            -H "Authorization: Bearer ${{ secrets.SLACK_BOT_TOKEN }}" | jq .
+
+          echo ""
+          echo "=== Channel Info ==="
+          curl -s -X GET "https://slack.com/api/conversations.info?channel=C0AHYBADC9E" \
+            -H "Authorization: Bearer ${{ secrets.SLACK_BOT_TOKEN }}" | jq .
+
+          echo ""
+          echo "=== Bot membership check ==="
+          curl -s -X GET "https://slack.com/api/conversations.members?channel=C0AHYBADC9E" \
+            -H "Authorization: Bearer ${{ secrets.SLACK_BOT_TOKEN }}" | jq .
