@@ -37,4 +37,5 @@ jobs:
 
             Built from commit: `${{ github.sha }}`
           message-id: storybook-preview
+          refresh-message-position: true
           repo-token: ${{ secrets.GITHUB_TOKEN }}
