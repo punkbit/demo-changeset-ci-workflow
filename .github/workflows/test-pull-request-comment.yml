@@ -37,4 +37,4 @@ jobs:
 
             Built from commit: `${{ github.sha }}`
           message-id: storybook-preview
-          repo-token: ${{ steps.gh-workflow-token.outputs.token }}
+          repo-token: ${{ secrets.GITHUB_TOKEN }}
