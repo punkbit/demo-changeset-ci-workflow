@@ -18,36 +18,12 @@ jobs:
   deploy:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout
-        uses: actions/checkout@v6
-
-      - name: Generate GitHub workflow token
-        id: gh-workflow-token
-        uses: actions/create-github-app-token@v2
-        with:
-          app-id: ${{ secrets.WORKFLOW_AUTH_PUBLIC_APP_ID }}
-          private-key: ${{ secrets.WORKFLOW_AUTH_PUBLIC_PRIVATE_KEY }}
-
-      - name: Setup Node.js
-        uses: actions/setup-node@v6
-        with:
-          node-version: '23.x'
-
-      - name: Enable Corepack
-        run: corepack enable
-
-      - name: Install dependencies
-        run: yarn install --immutable
-
       - name: Deploy to Vercel (Preview)
         if: github.event_name == 'pull_request'
         id: deploy
         run: |
-          DEPLOYMENT_URL=$(vercel deploy \
-            --prebuilt \
-            --yes \
-            --token=${{ secrets.VERCEL_TOKEN }})
-          echo "url=$(uuidgen | tr -d '-').test.com" >> $GITHUB_OUTPUT
+          DEPLOYMENT_URL="$(uuidgen | tr -d '-').test.com"
+          echo "url=$(echo $DEPLOYMENT_URL)" >> $GITHUB_OUTPUT
           echo "Preview deployed to: $DEPLOYMENT_URL"
 
       - name: Comment PR with Preview URL
