@@ -1,5 +1,11 @@
 # @punkbit/demo-changeset-ci-workflow
 
+## 2.6.0-rc.1
+
+### Patch Changes
+
+- 0ee6779: // I got some changes 25 March 10:47am
+
 ## 2.6.0-rc.0
 
 ### Minor Changes
