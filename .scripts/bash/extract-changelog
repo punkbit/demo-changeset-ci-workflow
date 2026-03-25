@@ -18,15 +18,25 @@ if [[ ! -f "$CHANGELOG_FILE" ]]; then
   exit 1
 fi
 
-ESCAPED_VERSION=$(echo "$VERSION" | sed 's/[.]/\\./g; s/[-]/\\-/g')
+# NOTE: Extract content between "## <version>" and the next "## <version>" header
+FOUND=false
+CHANGELOG=""
 
-# NOTE: Extract content between this version header and the next version header
-CHANGELOG=$(awk -v pattern="^## ${ESCAPED_VERSION}$" '
-  BEGIN { found = 0 }
-  $0 ~ pattern { found = 1; next }
-  found && /^## [0-9]+\./ { exit }
-  found { print }
-' "$CHANGELOG_FILE")
+while IFS= read -r line; do
+  if [[ "$line" == "## $VERSION" ]]; then
+    FOUND=true
+    continue
+  fi
+
+  if $FOUND; then
+    if [[ "$line" =~ ^##\ [0-9] ]]; then
+      break
+    fi
+    CHANGELOG+="$line"$'\n'
+  fi
+done < "$CHANGELOG_FILE"
+
+CHANGELOG="${CHANGELOG%$'\n'}"
 
 if [[ -z "$CHANGELOG" ]]; then
   echo "No changelog content found for version $VERSION"
