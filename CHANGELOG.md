@@ -1,5 +1,29 @@
 # @punkbit/demo-changeset-ci-workflow
 
+## 3.0.0
+
+### Major Changes
+
+- 610d5de: BREAKING: Refactor API response structure for better consistency
+
+  The response object now wraps all data in a `data` field and errors in an `errors` field.
+
+### Minor Changes
+
+- 610d5de: Add support for custom themes in dashboard settings
+- ab13929: SOME CHANGE 202603031139
+- 906bd76: SOME CHANGE 202603251032
+- 906bd76: SOME CHANGE 202603250924
+- 610d5de: Add new analytics tracking module with privacy-first approach
+- 887a404: SOME CHANGE 202603031128
+- fca0437: SOME CHANGE 202603031126
+
+### Patch Changes
+
+- 610d5de: Fix null pointer exception in user authentication flow
+- 610d5de: Update dependencies to latest versions
+- 0ee6779: // I got some changes 25 March 10:47am
+
 ## 2.6.0-rc.1
 
 ### Patch Changes
