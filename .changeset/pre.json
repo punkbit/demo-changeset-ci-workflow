@@ -1,0 +1,14 @@
+{
+  "mode": "pre",
+  "tag": "rc",
+  "initialVersions": {
+    "@punkbit/demo-changeset-ci-workflow": "2.5.0"
+  },
+  "changesets": [
+    "calm-parts-swim",
+    "clear-states-tell",
+    "great-breads-bet",
+    "six-peaches-draw",
+    "three-toys-heal"
+  ]
+}

@@ -1,5 +1,15 @@
 # @punkbit/demo-changeset-ci-workflow
 
+## 2.6.0-rc.0
+
+### Minor Changes
+
+- ab13929: SOME CHANGE 202603031139
+- 906bd76: SOME CHANGE 202603251032
+- 906bd76: SOME CHANGE 202603250924
+- 887a404: SOME CHANGE 202603031128
+- fca0437: SOME CHANGE 202603031126
+
 ## 2.5.0
 
 ### Minor Changes
