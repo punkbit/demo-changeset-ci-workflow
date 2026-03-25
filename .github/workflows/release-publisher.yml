@@ -11,7 +11,6 @@ concurrency: ${{ github.workflow }}-${{ github.ref }}
 jobs:
   publish-to-npm:
     name: Publish to NPM
-    if: github.event.pull_request.merged == true
     runs-on: ubuntu-latest
     permissions:
       contents: write
@@ -29,15 +28,15 @@ jobs:
         id: verify-merge
         run: |
           COMMIT_SHA="${{ github.sha }}"
-          
+
           echo "🔍 Checking if commit $COMMIT_SHA is from a release PR merge..."
-          
+
           COMMIT_MSG=$(git log -1 --format=%s "$COMMIT_SHA")
-          
+
           # WARNING: This is coupled with generate release commit
           # if you need to modify, apply the changes accordingly
           # Script outputs "VERSION RELEASE_TYPE" on success (e.g., "1.2.3 latest")
-          if OUTPUT=$(.scripts/verify-release-commit "$COMMIT_MSG"); then
+          if OUTPUT=$(.scripts/bash/verify-release-commit "$COMMIT_MSG"); then
             VERSION=$(echo "$OUTPUT" | awk '{print $1}')
             RELEASE_TYPE=$(echo "$OUTPUT" | awk '{print $2}')
             echo "✅ Detected release PR merge for version $VERSION ($RELEASE_TYPE)"
@@ -84,19 +83,19 @@ jobs:
         if: steps.verify-merge.outputs.is_release == 'true'
         run: |
           TAG="${{ steps.verify-merge.outputs.tag }}"
-          
+
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
-          
+
           # Check if tag already exists
           if git rev-parse "$TAG" >/dev/null 2>&1; then
             echo "⚠️ Tag $TAG already exists. Skipping tag creation."
             exit 0
           fi
-          
+
           git tag -a "$TAG" -m "Release $TAG"
           git push origin "$TAG"
-          
+
           echo "✅ Created and pushed tag $TAG"
 
       - name: Setup Node.js
@@ -245,20 +244,15 @@ jobs:
             echo "✅ Created maintenance branch '$MAINTENANCE_BRANCH'"
           fi
 
-      - name: Join Slack channel
-        if: steps.verify-merge.outputs.is_release == 'true'
-        run: |
-          curl -s -X POST https://slack.com/api/conversations.join \
-            -H "Authorization: Bearer ${{ secrets.SLACK_BOT_TOKEN }}" \
-            -H "Content-Type: application/json" \
-            -d '{"channel": "#click-ui"}'
-
       - name: Notify Slack about new release
         if: steps.verify-merge.outputs.is_release == 'true'
         uses: slackapi/slack-github-action@v2.1.1
         with:
           method: chat.postMessage
           token: ${{ secrets.SLACK_BOT_TOKEN }}
+          # TODO: Maybe create a script version with templates
+          # as notifications at the moment are inline
+          # and hard to confirm output without CI/CD runtime
           payload: |
-            channel: "#click-ui"
+            channel: "${{ secrets.SLACK_CHANNEL_FOR_GENERAL }}"
             text: "===\n🚀 *Click UI ${{ steps.verify-merge.outputs.version }} has launched!* 🎉\n\n📦 <https://www.npmjs.com/package/@clickhouse/click-ui/v/${{ steps.verify-merge.outputs.version }}|View on npm>\n📋 <https://github.com/ClickHouse/click-ui/blob/${{ steps.verify-merge.outputs.tag }}/CHANGELOG.md|View Changelog>\n\n_Release type: ${{ steps.package-info.outputs.tag }}_\n==="

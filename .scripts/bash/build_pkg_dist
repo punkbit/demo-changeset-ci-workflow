@@ -1,0 +1,31 @@
+#!/bin/bash
+
+if [[ -d ./dist ]]; then
+  if ! rm -rf ./dist; then
+    echo "⚠️Failed to delete dist directory"
+  fi
+fi
+
+if ! yarn typecheck; then
+  echo "👹 Oops! Found typescript issues..."
+
+  exit 1
+fi
+
+if ! vite build; then
+  echo "👹 Oops! Failed to build the package..."
+
+  exit 1
+fi
+
+if ! .scripts/js/generate-exports; then
+  echo "👹 Oops! Failed to generate exports..."
+
+  exit 1
+fi
+
+# Always run the health check locally
+# but the health check is a separate step on CI
+if [[ -z "$CI" ]]; then
+  yarn build:health_check
+fi
