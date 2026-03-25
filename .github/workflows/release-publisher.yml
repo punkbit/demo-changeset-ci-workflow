@@ -159,18 +159,11 @@ jobs:
         run: |
           VERSION="${{ steps.verify-merge.outputs.version }}"
 
-          if [[ -f CHANGELOG.md ]]; then
-            CHANGELOG=$(awk "/## $VERSION/,/## [0-9]/" CHANGELOG.md | sed '1d;$d' | sed '/^$/d')
-
-            if [[ -z "$CHANGELOG" ]]; then
-              CHANGELOG="📝 See [CHANGELOG.md](./CHANGELOG.md) for details."
-            fi
+          if CHANGELOG=$(.scripts/bash/extract-changelog "$VERSION"); then
+            echo "$CHANGELOG" > /tmp/changelog.txt
           else
-            CHANGELOG="No changelog available."
+            echo "No changelog available for version $VERSION." > /tmp/changelog.txt
           fi
-
-          # Try persist multiple lines
-          echo "$CHANGELOG" > /tmp/changelog.txt
 
       - name: Create GitHub Release
         if: steps.verify-merge.outputs.is_release == 'true'
