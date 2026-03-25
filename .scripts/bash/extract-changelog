@@ -46,4 +46,5 @@ if [[ -z "$CHANGELOG" ]]; then
   exit 1
 fi
 
-echo "$CHANGELOG"
+# NOTE: Prevent GitHub mentioning user by replacing @username with `@username`
+echo "$CHANGELOG" | sed 's/@\([a-zA-Z0-9][a-zA-Z0-9-]*\)/`@\1`/g'
